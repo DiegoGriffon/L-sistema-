@@ -1,36 +1,35 @@
-
 # ==============================================================================
 # L-sistema (sistema de Lindenmayer)
-# Simulacion de arquitectura vegetal mediante reescritura paralela de cadenas
-# e interpretacion geometrica de tortuga entre corchetes 
+# Simulación de arquitectura vegetal mediante reescritura paralela de cadenas
+# e interpretación geométrica de tortuga entre corchetes
 # ==============================================================================
 
 # Para simular el crecimiento de una planta por etapas. Empezamos con una
 # cadena corta de texto llamada "axioma" (nuestro punto de partida) y, en
-# cada ronda o iteracion, revisamos todos sus simbolos al mismo tiempo para
-# reemplazarlos segun las "reglas" que hayamos definido. A ese proceso de ir
+# cada ronda o iteración, revisamos todos sus símbolos al mismo tiempo para
+# reemplazarlos según las "reglas" que hayamos definido. A ese proceso de ir
 # transformando texto paso a paso se le llama "reescritura de cadenas", y que
-# ocurra en todos los simbolos a la vez (reescritura en paralelo) es lo que hace
-# que un L-sistema se parezca al desarrollo simultaneo de varias partes de una
-# planta. Si un simbolo como '+' o '[' no tiene una regla propia, simplemente se
-# queda tal como esta en esa ronda.
+# ocurra en todos los símbolos a la vez (reescritura en paralelo) es lo que hace
+# que un L-sistema se parezca al desarrollo simultáneo de varias partes de una
+# planta. Si un símbolo como '+' o '[' no tiene una regla propia, simplemente se
+# queda tal como está en esa ronda.
 
 # ==============================================================================
 
 # PARTE 1: MOTOR DE REESCRITURA DE CADENAS EN PARALELO
-# Que hace esta parte: Toma una cadena inicial (axioma) y la transforma paso a
-# paso aplicando reglas de sustitucion de forma simultanea a todos los simbolos.
+# Qué hace esta parte: Toma una cadena inicial (axioma) y la transforma paso a
+# paso aplicando reglas de sustitución de forma simultánea a todos los símbolos.
 #
-# Consiste en transformar una secuencia de simbolos (una cadena de caracteres)
-# en otra nueva mediante reglas del tipo simbolo -> reemplazo. En lugar de
-# calcular numeros con formulas, se manipulan simbolos que representan partes,
+# Consiste en transformar una secuencia de símbolos (una cadena de caracteres)
+# en otra nueva mediante reglas del tipo símbolo -> reemplazo. En lugar de
+# calcular números con fórmulas, se manipulan símbolos que representan partes,
 # estados o instrucciones.
 #
 # REESCRITURA PARALELA vs. SECUENCIAL:
-# En las gramaticas formales clasicas la reescritura suele ser secuencial (se
-# aplica o deriva por partes). En los L-sistemas es PARALELA: en cada iteracion,
-# TODOS los simbolos presentes en la cadena se reescriben a la vez, simulando
-# el crecimiento o division simultanea de multiples partes de un organismo.
+# En las gramáticas formales clásicas la reescritura suele ser secuencial (se
+# aplica o deriva por partes). En los L-sistemas es PARALELA: en cada iteración,
+# TODOS los símbolos presentes en la cadena se reescriben a la vez, simulando
+# el crecimiento o división simultánea de múltiples partes de un organismo.
 # ==============================================================================
 
 expandir_lsistema <- function(axioma, reglas, num_iteraciones, max_caracteres = 350000) {
@@ -41,7 +40,7 @@ expandir_lsistema <- function(axioma, reglas, num_iteraciones, max_caracteres = 
     # Divide la cadena actual en un vector de caracteres individuales
     caracteres <- strsplit(cadena, "", fixed = TRUE)[[1]]
     
-    # Sustituye en paralelo cada simbolo segun 'reglas'. Si el simbolo no tiene
+    # Sustituye en paralelo cada símbolo según 'reglas'. Si el símbolo no tiene
     # regla definida (por ejemplo '+', '-', '[' o ']'), se conserva tal cual.
     siguientes_caracteres <- vapply(
       caracteres,
@@ -57,7 +56,7 @@ expandir_lsistema <- function(axioma, reglas, num_iteraciones, max_caracteres = 
     # exponencial en iteraciones altas y consumir mucha memoria
     if (nchar(cadena) > max_caracteres) {
       warning(sprintf(
-        "Cadena truncada en iteracion %d por superar %d caracteres.",
+        "Cadena truncada en iteración %d por superar %d caracteres.",
         iteracion,
         nchar(cadena)
       ))
@@ -69,34 +68,34 @@ expandir_lsistema <- function(axioma, reglas, num_iteraciones, max_caracteres = 
 }
 
 # ==============================================================================
-# PARTE 2: INTERPRETE DE TORTUGA 2D CON PILA DE RAMIFICACION ('[' y ']')
-# Que hace esta parte: Traduce la cadena simbolica resultante de la
-# reescritura en segmentos geometricos (coordenadas x, y) y registra la
-# profundidad de ramificacion de cada segmento.
+# PARTE 2: INTÉRPRETE DE TORTUGA 2D CON PILA DE RAMIFICACIÓN ('[' y ']')
+# Qué hace esta parte: Traduce la cadena simbólica resultante de la
+# reescritura en segmentos geométricos (coordenadas x, y) y registra la
+# profundidad de ramificación de cada segmento.
 #
-# ¿QUE ES UN INTERPRETE DE TORTUGA?
-# La cadena generada es solo texto simbolico; no es un dibujo por si misma.
-# Un interprete de tortuga imagina un cursor o "tortuga" con posicion (x, y)
-# y angulo de rumbo que lee la cadena simbolo por simbolo:
-#   - 'F': avanza un paso dibujando un segmento visible.
-#   - 'f': avanza un paso sin dibujar.
-#   - '+' / '-': gira el rumbo a la izquierda o a la derecha un angulo fijo.
-#   - '[': guarda (apila) la posicion y el angulo actuales para iniciar una rama.
-#   - ']': recupera (desapila) el ultimo estado guardado para volver al nudo
-#     de ramificacion y explorar otra rama.
+# ¿QUÉ ES UN INTÉRPRETE DE TORTUGA?
+# La cadena generada es solo texto simbólico; no es un dibujo por sí misma.
+# Un intérprete de tortuga imagina un cursor o "tortuga" con posición (x, y)
+# y ángulo de rumbo que lee la cadena símbolo por símbolo:
+#   'F': avanza un paso dibujando un segmento visible.
+#   'f': avanza un paso sin dibujar.
+#   '+' / '-': gira el rumbo a la izquierda o a la derecha un ángulo fijo.
+#   '[': guarda (apila) la posición y el ángulo actuales para iniciar una rama.
+#   ']': recupera (desapila) el último estado guardado para volver al nudo
+#     de ramificación y explorar otra rama.
 # ==============================================================================
 
 interpretar_tortuga <- function(cadena, angulo_grados, longitud_paso = 1.0, angulo_inicial_grados = 90) {
   caracteres <- strsplit(cadena, "", fixed = TRUE)[[1]]
   grados_a_radianes <- pi / 180
   
-  # Estado inicial: base en (0, 0) y orientacion vertical hacia arriba (90 grados)
+  # Estado inicial: base en (0, 0) y orientación vertical hacia arriba (90 grados)
   x_actual <- 0.0
   y_actual <- 0.0
   angulo_actual <- angulo_inicial_grados * grados_a_radianes
   giro_radianes <- angulo_grados * grados_a_radianes
   
-  # Pila LIFO (ultimo en entrar, primero en salir) para ramificaciones anidadas
+  # Pila LIFO (último en entrar, primero en salir) para ramificaciones anidadas
   pila_estados <- vector("list", length = length(caracteres) + 1L)
   tope_pila <- 0L
   
@@ -112,7 +111,7 @@ interpretar_tortuga <- function(cadena, angulo_grados, longitud_paso = 1.0, angu
   
   for (simbolo in caracteres) {
     if (simbolo == "F" || simbolo == "f") {
-      # Calcula el extremo final del paso segun la posicion y angulo vigentes
+      # Calcula el extremo final del paso según la posición y el ángulo vigentes
       x_nuevo <- x_actual + longitud_paso * cos(angulo_actual)
       y_nuevo <- y_actual + longitud_paso * sin(angulo_actual)
       
@@ -135,11 +134,11 @@ interpretar_tortuga <- function(cadena, angulo_grados, longitud_paso = 1.0, angu
       # Rota en sentido horario
       angulo_actual <- angulo_actual - giro_radianes
     } else if (simbolo == "[") {
-      # Guarda posicion y orientacion actuales para abrir una rama lateral
+      # Guarda posición y orientación actuales para abrir una rama lateral
       tope_pila <- tope_pila + 1L
       pila_estados[[tope_pila]] <- c(x_actual, y_actual, angulo_actual)
     } else if (simbolo == "]") {
-      # Restaura el ultimo estado guardado para regresar al punto de bifurcacion
+      # Restaura el último estado guardado para regresar al punto de bifurcación
       if (tope_pila > 0L) {
         estado_recuperado <- pila_estados[[tope_pila]]
         tope_pila <- tope_pila - 1L
@@ -150,7 +149,7 @@ interpretar_tortuga <- function(cadena, angulo_grados, longitud_paso = 1.0, angu
     }
   }
   
-  # Devuelve una tabla vacia con la estructura correcta si no hubo segmentos
+  # Devuelve una tabla vacía con la estructura correcta si no hubo segmentos
   if (indice_seg == 0L) {
     return(data.frame(
       x_inicio = numeric(0),
@@ -161,7 +160,7 @@ interpretar_tortuga <- function(cadena, angulo_grados, longitud_paso = 1.0, angu
     ))
   }
   
-  # Conserva unicamente los trazos visibles generados por 'F'
+  # Conserva únicamente los trazos visibles generados por 'F'
   indices_validos <- seq_len(indice_seg)[es_dibujable[seq_len(indice_seg)]]
   
   data.frame(
@@ -174,15 +173,15 @@ interpretar_tortuga <- function(cadena, angulo_grados, longitud_paso = 1.0, angu
 }
 
 # ==============================================================================
-# PARTE 3: NORMALIZACION GEOMETRICA Y ARMADO DE CADA PANEL
-# Que hace esta parte: Ejecuta la reescritura y la tortuga para un modelo,
+# PARTE 3: NORMALIZACIÓN GEOMÉTRICA Y ARMADO DE CADA PANEL
+# Qué hace esta parte: Ejecuta la reescritura y la tortuga para un modelo,
 # ajusta su altura a 1.0, centra su eje horizontal en 0 y le asigna su
 # etiqueta de panel.
 #
-# ¿POR QUE NORMALIZAR ESCALA Y CENTRO?
-# Cada regla e iteracion produce estructuras de distinto tamano absoluto y
+# ¿POR QUÉ NORMALIZAR ESCALA Y CENTRO?
+# Cada regla e iteración produce estructuras de distinto tamaño absoluto y
 # desplazamiento lateral. Normalizar permite comparar con claridad la forma
-# arquitectonica de cada copa sin que unas tapen o aplasten a otras.
+# arquitectónica de cada copa sin que unas tapen o aplasten a otras.
 # ==============================================================================
 
 construir_panel <- function(etiqueta_panel, axioma, reglas, num_iteraciones, angulo_grados, desplazamiento_x = 0) {
@@ -193,7 +192,7 @@ construir_panel <- function(etiqueta_panel, axioma, reglas, num_iteraciones, ang
     num_iteraciones = num_iteraciones
   )
   
-  # 2) Traduccion geometrica mediante tortuga
+  # 2) Traducción geométrica mediante tortuga
   segmentos <- interpretar_tortuga(
     cadena = cadena_expandida,
     angulo_grados = angulo_grados,
@@ -213,7 +212,7 @@ construir_panel <- function(etiqueta_panel, axioma, reglas, num_iteraciones, ang
   segmentos$y_inicio <- (segmentos$y_inicio - y_minimo) / escala_altura
   segmentos$y_fin <- (segmentos$y_fin - y_minimo) / escala_altura
   
-  # Fija el orden de aparicion de los paneles en la grafica
+  # Fija el orden de aparición de los paneles en la gráfica
   segmentos$panel <- factor(
     etiqueta_panel,
     levels = c(
@@ -227,20 +226,20 @@ construir_panel <- function(etiqueta_panel, axioma, reglas, num_iteraciones, ang
 }
 
 # ==============================================================================
-# PARTE 4: CONFIGURACION DE TRES L-SISTEMAS Y CONSOLIDACION DE DATOS
-# Que hace esta parte: Define tres L-sistemas con distintos axiomas,
-# reglas, iteraciones y angulos, une sus segmentos en una tabla y asigna un
-# grosor de linea segun la profundidad de ramificacion.
+# PARTE 4: CONFIGURACIÓN DE TRES L-SISTEMAS Y CONSOLIDACIÓN DE DATOS
+# Qué hace esta parte: Define tres L-sistemas con distintos axiomas,
+# reglas, iteraciones y ángulos, une sus segmentos en una tabla y asigna un
+# grosor de línea según la profundidad de ramificación.
 #
-# SIMBOLOS DE DIBUJO ('F') vs. SIMBOLOS DE CONTROL ('X'):
-# En los paneles 2 y 3, 'X' actua como simbolo auxiliar o variable de estado
-# que organiza como se ramifica la cadena en pasos sucesivos, mientras que 'F'
+# SÍMBOLOS DE DIBUJO ('F') vs. SÍMBOLOS DE CONTROL ('X'):
+# En los paneles 2 y 3, 'X' actúa como símbolo auxiliar o variable de estado
+# que organiza cómo se ramifica la cadena en pasos sucesivos, mientras que 'F'
 # es el que genera los segmentos dibujables.
 #
-# GROSOR SEGUN PROFUNDIDAD DE RAMA:
-# A mayor 'profundidad_rama', mas anidada esta la bifurcacion. Reducir
-# gradualmente 'grosor_linea' ayuda a distinguir visualmente los ejes mas
-# internos de las ramificaciones mas finas.
+# GROSOR SEGÚN PROFUNDIDAD DE RAMA:
+# A mayor 'profundidad_rama', más anidada está la bifurcación. Reducir
+# gradualmente 'grosor_linea' ayuda a distinguir visualmente los ejes más
+# internos de las ramificaciones más finas.
 # ==============================================================================
 panel_1 <- construir_panel(
   etiqueta_panel = "1. Porte esbelto (ramas alternas)",
@@ -275,23 +274,23 @@ panel_3 <- construir_panel(
   desplazamiento_x = 0
 )
 
-# Reune los tres paneles en un unico data.frame listo para graficar
+# Reúne los tres paneles en un único data.frame listo para graficar
 datos_plantas <- rbind(panel_1, panel_2, panel_3)
 
-# Calcula el grosor de cada segmento en funcion de su profundidad de ramificacion
+# Calcula el grosor de cada segmento en función de su profundidad de ramificación
 datos_plantas$grosor_linea <- pmax(0.22, 0.85 * (0.82 ^ datos_plantas$profundidad_rama))
 
 # ==============================================================================
-# PARTE 5: RENDERIZADO Y EXPORTACION GRAFICA CON GGPLOT2
-# Que hace esta parte: Construye la figura multipanel con proporcion
-# geometrica real, muestra el grafico en pantalla y deja comentada la
-# exportacion vectorial en SVG.
+# PARTE 5: RENDERIZADO Y EXPORTACIÓN GRÁFICA CON GGPLOT2
+# Qué hace esta parte: Construye la figura multipanel con proporción
+# geométrica real, muestra el gráfico en pantalla y deja comentada la
+# exportación vectorial en SVG.
 #
-# ¿POR QUE USAR coord_fixed(ratio = 1) SIN scales = "free_x"?
-# 'coord_fixed(ratio = 1)' mantiene la misma escala fisica en los ejes x e y
-# para que los angulos de ramificacion no se deformen. Combinar
-# 'facet_wrap(..., scales = "free_x")' con una relacion de aspecto fija puede
-# provocar error en 'ggplot2', por lo que aqui se omite 'scales = "free_x"'.
+# ¿POR QUÉ USAR coord_fixed(ratio = 1) SIN scales = "free_x"?
+# 'coord_fixed(ratio = 1)' mantiene la misma escala física en los ejes x e y
+# para que los ángulos de ramificación no se deformen. Combinar
+# 'facet_wrap(..., scales = "free_x")' con una relación de aspecto fija puede
+# provocar error en 'ggplot2', por lo que aquí se omite 'scales = "free_x"'.
 # ==============================================================================
 
 library(ggplot2)
@@ -326,14 +325,14 @@ grafico_lsistemas <- ggplot(datos_plantas) +
     plot.margin = margin(15, 15, 15, 15)
   )
 
-# Muestra la figura en la ventana grafica de R
+# Muestra la figura en la ventana gráfica de R
 print(grafico_lsistemas)
 
-# Exportacion opcional en formato vectorial SVG sin fondo:
+# Exportación opcional en formato vectorial SVG sin fondo:
 # ggsave("l_sistemas_plantas.svg", plot = grafico_lsistemas, width = 10, height = 4.8, bg = "transparent")
 
 # ==============================================================================
-# BIBLIOGRAFIA FUNDAMENTAL
+# BIBLIOGRAFÍA FUNDAMENTAL
 # - Lindenmayer, A. (1968). Mathematical models for cellular interactions in
 #   development. I & II. Journal of Theoretical Biology, 18(3), 280-315.
 # - Prusinkiewicz, P., & Lindenmayer, A. (1990). The Algorithmic Beauty of
@@ -342,7 +341,4 @@ print(grafico_lsistemas)
 #   Academic Press.
 # - Hanan, J. S. (1992). Parametric L-systems and their application to the
 #   modelling and visualization of plants. PhD Thesis, University of Regina.
-# - Vos, J., Marcelis, L. F. M., de Visser, P. H. B., Struik, P. C., & Evers,
-#   J. B. (Eds.). (2007). Functional-Structural Plant Modelling in Crop
-#   Production. Springer.
-# ==============================================================================
+# - Vos, J., Marcelis, L. F. M., de Visser, P. H. B., Struik, P
